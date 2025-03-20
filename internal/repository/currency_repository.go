@@ -24,13 +24,21 @@ type Currency struct {
 	Value    string `xml:"Value"`
 }
 
-type CurrencyRepository struct{}
+type CurrencyRepository struct {
+	currencies map[int][]models.Currency
+}
 
 func NewCurrencyRepository() *CurrencyRepository {
-	return &CurrencyRepository{}
+	return &CurrencyRepository{
+		currencies: make(map[int][]models.Currency),
+	}
 }
 
 func (r *CurrencyRepository) GetAll() ([]models.Currency, error) {
+	if _, ok := r.currencies[time.Now().Day()]; ok {
+		return r.currencies[time.Now().Day()], nil
+	}
+
 	var result []models.Currency
 
 	client := &http.Client{}
@@ -65,12 +73,9 @@ func (r *CurrencyRepository) GetAll() ([]models.Currency, error) {
 		if err != nil {
 			continue
 		}
-
-		ratePerUnit := exchangeRate / float64(currency.Nominal)
 		result = append(result, models.Currency{
-			Name:     currency.Name,
 			Code:     currency.CharCode,
-			Exchange: ratePerUnit,
+			Exchange: exchangeRate,
 		})
 	}
 	return result, nil
