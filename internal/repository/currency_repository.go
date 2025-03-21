@@ -78,6 +78,10 @@ func (r *CurrencyRepository) GetAll() ([]models.Currency, error) {
 			Exchange: exchangeRate,
 		})
 	}
+	result = append(result, models.Currency{
+		Code:     "RUB",
+		Exchange: 1.0,
+	})
 	return result, nil
 }
 
