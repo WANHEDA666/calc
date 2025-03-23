@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"golang.org/x/net/html/charset"
 	"net/http"
+	"sort"
 	"strconv"
 	"strings"
 	"time"
@@ -81,6 +82,9 @@ func (r *CurrencyRepository) GetAll() ([]models.Currency, error) {
 	result = append(result, models.Currency{
 		Code:     "RUB",
 		Exchange: 1.0,
+	})
+	sort.Slice(result, func(i, j int) bool {
+		return result[i].Code < result[j].Code
 	})
 	return result, nil
 }
